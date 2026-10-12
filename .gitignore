@@ -1,0 +1,13 @@
+.env
+*.env
+!.env.example
+*.key
+*.pem
+*.pfx
+*.crt
+secrets/
+credentials/
+n8n-backups/
+*.log
+Thumbs.db
+.DS_Store

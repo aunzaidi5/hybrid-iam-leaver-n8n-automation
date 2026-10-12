@@ -1,0 +1,22 @@
+# Lab baseline. Restrict TCP 5678 at the EC2 security group and host firewall.
+# Add a TLS reverse proxy and webhook authentication before production use.
+services:
+  n8n:
+    image: docker.n8n.io/n8nio/n8n:latest
+    restart: unless-stopped
+    ports:
+      - "5678:5678"
+    environment:
+      GENERIC_TIMEZONE: ${GENERIC_TIMEZONE:-Asia/Karachi}
+      TZ: ${TZ:-Asia/Karachi}
+    volumes:
+      - n8n_data:/home/node/.n8n
+  ollama:
+    image: ollama/ollama:latest
+    restart: unless-stopped
+    volumes:
+      - ollama_data:/root/.ollama
+    # No host port: n8n connects over the Compose network at http://ollama:11434.
+volumes:
+  n8n_data:
+  ollama_data:
