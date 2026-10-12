@@ -1,14 +1,14 @@
-# Hybrid IAM Leaver Automation
+﻿# Hybrid IAM Leaver Automation
 
 A hands-on hybrid identity lab that disables an Active Directory account, removes its AWS access-group membership, revokes Microsoft Entra sessions through Microsoft Graph, and records the leaver event through n8n, Slack, Google Sheets and a locally generated email summary.
 
-**Author:** Aun Zaidi · **Environment:** AWS-hosted hybrid identity lab · **Scope:** employee offboarding demonstration
+**Author:** Aun Zaidi Â· **Environment:** AWS-hosted hybrid identity lab Â· **Scope:** employee offboarding demonstration
 
 ![Final n8n workflow with Microsoft Graph, Slack, Google Sheets and Ollama email branches](screenshots/30-Final-n8n-Workflow.png)
 
-*Figure 30 — The supplied final workflow. Ollama supplies the language model to the summary chain; n8n sends the email. Separate screenshots below document Slack and Sheets delivery.*
+*Figure 30 â€” The supplied final workflow. Ollama supplies the language model to the summary chain; n8n sends the email. Separate screenshots below document Slack and Sheets delivery.*
 
-**Start here:** [Architecture](#architecture) · [Leaver workflow](#leaver-workflow) · [Test results](#test-results--evidence) · [Reproduction](#how-to-reproduce) · [Workflow import](n8n/README.md) · [Security and limitations](docs/security-and-limitations.md)
+**Start here:** [Architecture](#architecture) Â· [Leaver workflow](#leaver-workflow) Â· [Test results](#test-results--evidence) Â· [Reproduction](#how-to-reproduce) Â· [Workflow import](n8n/README.md) Â· [Security and limitations](docs/security-and-limitations.md)
 
 > This repository documents a completed lab using supplied implementation screenshots and project notes. The public PowerShell and Compose files are sanitized recreations of the documented setup; the n8n JSON is derived from the supplied export. Public-version adjustments are listed in the [import guide](n8n/README.md#changes-from-the-supplied-export). These public files have not been rerun against the live identity environment.
 
@@ -81,50 +81,50 @@ The first stage exchanged AWS service-provider metadata and Entra identity-provi
 
 SAML authenticates a user. SCIM creates and updates directory objects and memberships. A successful SAML setup alone does not provision a user or grant an AWS account permission set.
 
-<details>
-<summary>View implementation evidence</summary>
+
+
 
 ![Figure 01: AWS service-provider metadata is available for download, including issuer and ACS URLs.](screenshots/01-AWS-Download-Metadata.png)
 
-*Figure 01 — AWS service-provider metadata is available for download, including issuer and ACS URLs.*
+*Figure 01 â€” AWS service-provider metadata is available for download, including issuer and ACS URLs.*
 
 ![Figure 02: Importing AWS metadata into the Entra enterprise application.](screenshots/02-Entra-Upload-Metadata.png)
 
-*Figure 02 — Importing AWS metadata into the Entra enterprise application.*
+*Figure 02 â€” Importing AWS metadata into the Entra enterprise application.*
 
 ![Figure 03: SAML identifiers, reply URLs and access-portal sign-on URL configured in Entra.](screenshots/03-SAML-Configuration.png)
 
-*Figure 03 — SAML identifiers, reply URLs and access-portal sign-on URL configured in Entra.*
+*Figure 03 â€” SAML identifiers, reply URLs and access-portal sign-on URL configured in Entra.*
 
 ![Figure 04: AWS external identity-provider confirmation screen after selecting Entra metadata; this is a review step, not an AD domain trust.](screenshots/04-AWS-External-Identity-Provider-Review.png)
 
-*Figure 04 — AWS external identity-provider confirmation screen after selecting Entra metadata; this is a review step, not an AD domain trust.*
+*Figure 04 â€” AWS external identity-provider confirmation screen after selecting Entra metadata; this is a review step, not an AD domain trust.*
 
 ![Figure 05: Entra SCIM test connection succeeds. The secret-token field is masked.](screenshots/05-Entra-SCIM-Connection-Success.png)
 
-*Figure 05 — Entra SCIM test connection succeeds. The secret-token field is masked.*
+*Figure 05 â€” Entra SCIM test connection succeeds. The secret-token field is masked.*
 
 ![Figure 06: Initial AWS-Lab-Users group in Entra: Source is Cloud. This is not the later AD-synced group.](screenshots/06-Entra-Cloud-Only-Lab-Group.png)
 
-*Figure 06 — Initial AWS-Lab-Users group in Entra: Source is Cloud. This is not the later AD-synced group.*
+*Figure 06 â€” Initial AWS-Lab-Users group in Entra: Source is Cloud. This is not the later AD-synced group.*
 
 ![Figure 07: Entra reports Start provisioning successful; the screen still says the initial sync has not run.](screenshots/07-Entra-Start-Provisioning.png)
 
-*Figure 07 — Entra reports Start provisioning successful; the screen still says the initial sync has not run.*
+*Figure 07 â€” Entra reports Start provisioning successful; the screen still says the initial sync has not run.*
 
 ![Figure 08: Initial cloud-only group assigned to the AWS enterprise application.](screenshots/08-Entra-Enterprise-App-Group-Assignment.png)
 
-*Figure 08 — Initial cloud-only group assigned to the AWS enterprise application.*
+*Figure 08 â€” Initial cloud-only group assigned to the AWS enterprise application.*
 
 ![Figure 09: AWS-Lab-Users appears in Identity Center with Created by SCIM and one member.](screenshots/09-AWS-SCIM-Group-Provisioned.png)
 
-*Figure 09 — AWS-Lab-Users appears in Identity Center with Created by SCIM and one member.*
+*Figure 09 â€” AWS-Lab-Users appears in Identity Center with Created by SCIM and one member.*
 
 ![Figure 10: Initial cloud-only test identity can see ViewOnlyAccess in the AWS access portal.](screenshots/10-AWS-Initial-ViewOnlyAccess.png)
 
-*Figure 10 — Initial cloud-only test identity can see ViewOnlyAccess in the AWS access portal.*
+*Figure 10 â€” Initial cloud-only test identity can see ViewOnlyAccess in the AWS access portal.*
 
-</details>
+
 
 
 ### AD-sourced hybrid identity
@@ -133,34 +133,34 @@ The second stage introduced the `iam.automation` domain, Cloud Sync, Omar's sync
 
 The Cloud Sync configuration screenshot captures a **Disabled** configuration during setup. The next screenshot proves successful **on-demand** user provisioning; it should not be presented as proof that the scheduled synchronization configuration was healthy at that earlier moment.
 
-<details>
-<summary>View implementation evidence</summary>
+
+
 
 ![Figure 11: AD Domains and Trusts console shows the iam.automation domain on DC01.](screenshots/11-Active-Directory-Domain.png)
 
-*Figure 11 — AD Domains and Trusts console shows the iam.automation domain on DC01.*
+*Figure 11 â€” AD Domains and Trusts console shows the iam.automation domain on DC01.*
 
 ![Figure 12: Cloud Sync configuration for AD to Entra, captured while Disabled during setup.](screenshots/12-Entra-Cloud-Sync-Configuration.png)
 
-*Figure 12 — Cloud Sync configuration for AD to Entra, captured while Disabled during setup.*
+*Figure 12 â€” Cloud Sync configuration for AD to Entra, captured while Disabled during setup.*
 
 ![Figure 13: On-demand Cloud Sync successfully creates Omar in Entra and shows AccountEnabled=True.](screenshots/13-Entra-On-Demand-User-Provisioning.png)
 
-*Figure 13 — On-demand Cloud Sync successfully creates Omar in Entra and shows AccountEnabled=True.*
+*Figure 13 â€” On-demand Cloud Sync successfully creates Omar in Entra and shows AccountEnabled=True.*
 
 ![Figure 14: Omar appears in AWS IAM Identity Center with Created by SCIM and Enabled status.](screenshots/14-AWS-Omar-Provisioned.png)
 
-*Figure 14 — Omar appears in AWS IAM Identity Center with Created by SCIM and Enabled status.*
+*Figure 14 â€” Omar appears in AWS IAM Identity Center with Created by SCIM and Enabled status.*
 
 ![Figure 15: Review of the AD-synced SG-AWS-Lab-Users assignment to the ViewOnlyAccess permission set.](screenshots/15-AWS-Synced-Group-Permission-Set.png)
 
-*Figure 15 — Review of the AD-synced SG-AWS-Lab-Users assignment to the ViewOnlyAccess permission set.*
+*Figure 15 â€” Review of the AD-synced SG-AWS-Lab-Users assignment to the ViewOnlyAccess permission set.*
 
 ![Figure 16: Omar has ViewOnlyAccess available before offboarding.](screenshots/16-AWS-Omar-Access-Before-Offboarding.png)
 
-*Figure 16 — Omar has ViewOnlyAccess available before offboarding.*
+*Figure 16 â€” Omar has ViewOnlyAccess available before offboarding.*
 
-</details>
+
 
 
 ## Automation Infrastructure
@@ -171,18 +171,18 @@ The supplied [Compose baseline](docker/compose.yaml) publishes n8n on TCP 5678 a
 
 `latest` tags match the requested lab baseline, but do not lock the original runtime. Pin tested image versions or digests for a repeatable deployment.
 
-<details>
-<summary>View implementation evidence</summary>
+
+
 
 ![Figure 17: Initial n8n/Ollama chat test succeeds; this is an integration smoke test, not the leaver workflow.](screenshots/17-n8n-Ollama-Integration.png)
 
-*Figure 17 — Initial n8n/Ollama chat test succeeds; this is an integration smoke test, not the leaver workflow.*
+*Figure 17 â€” Initial n8n/Ollama chat test succeeds; this is an integration smoke test, not the leaver workflow.*
 
 ![Figure 18: Ubuntu shell shows both containers running, the model downloaded and an Ollama response. Ollama has no published host port.](screenshots/18-Docker-n8n-Ollama-Running.png)
 
-*Figure 18 — Ubuntu shell shows both containers running, the model downloaded and an Ollama response. Ollama has no published host port.*
+*Figure 18 â€” Ubuntu shell shows both containers running, the model downloaded and an Ollama response. Ollama has no published host port.*
 
-</details>
+
 
 
 ## Leaver Workflow
@@ -234,10 +234,10 @@ The lab app registration is **IAM-Leaver-n8n**. The two HTTP Request nodes use a
 
 | Permission visible in the lab | Use |
 |---|---|
-| `User.Read.All` — Application | Dynamic directory user lookup |
-| `User.RevokeSessions.All` — Application | Session revocation request |
-| `GroupMember.ReadWrite.All` — Application | Configured in the lab, but unused by this exported workflow; remove it for this scope |
-| `User.Read` — Delegated | Also visible in the screenshot; not used by the client-credentials flow |
+| `User.Read.All` â€” Application | Dynamic directory user lookup |
+| `User.RevokeSessions.All` â€” Application | Session revocation request |
+| `GroupMember.ReadWrite.All` â€” Application | Configured in the lab, but unused by this exported workflow; remove it for this scope |
+| `User.Read` â€” Delegated | Also visible in the screenshot; not used by the client-credentials flow |
 
 Grant admin consent for required application permissions. Configure the credential privately with the tenant-specific token URL `https://login.microsoftonline.com/<TENANT_ID>/oauth2/v2.0/token`, the app client ID, a secret, and scope `https://graph.microsoft.com/.default`. No credential values are included in this repository.
 
@@ -248,14 +248,14 @@ POST https://graph.microsoft.com/v1.0/users/{returned-id}/revokeSignInSessions
 
 Graph's revocation operation invalidates Entra refresh tokens and browser session cookies by advancing the user's session-validity timestamp. It can take a few minutes to apply. The lab received `{"value":true}`; that response is not an AWS session-revocation result. See [Microsoft's API reference](https://learn.microsoft.com/en-us/graph/api/user-revokesigninsessions?view=graph-rest-1.0).
 
-<details>
-<summary>View implementation evidence</summary>
+
+
 
 ![Figure 19: Graph application permissions granted to IAM-Leaver-n8n; the unused group-write and delegated permissions are also visible.](screenshots/19-Entra-Graph-App-Permissions.png)
 
-*Figure 19 — Graph application permissions granted to IAM-Leaver-n8n; the unused group-write and delegated permissions are also visible.*
+*Figure 19 â€” Graph application permissions granted to IAM-Leaver-n8n; the unused group-write and delegated permissions are also visible.*
 
-</details>
+
 
 
 ## Downstream AWS Deprovisioning
@@ -286,26 +286,26 @@ Slack carries an operational alert; Google Sheets stores the structured lab reco
 
 AI has no identity-management tools or authority. Its prose is not authoritative audit evidence. The original email prompt used Slack-style formatting, which explains the literal asterisks in the captured email; the public version requests plain text.
 
-<details>
-<summary>View implementation evidence</summary>
+
+
 
 ![Figure 26: Slack receives the IAM leaver notification. The original message contains fixed success statements; the public export reports the actual Graph result.](screenshots/26-Slack-Leaver-Notification.png)
 
-*Figure 26 — Slack receives the IAM leaver notification. The original message contains fixed success statements; the public export reports the actual Graph result.*
+*Figure 26 â€” Slack receives the IAM leaver notification. The original message contains fixed success statements; the public export reports the actual Graph result.*
 
 ![Figure 27: n8n maps the eight audit fields and displays the Google Sheets append output.](screenshots/27-n8n-Google-Sheets-Mapping.png)
 
-*Figure 27 — n8n maps the eight audit fields and displays the Google Sheets append output.*
+*Figure 27 â€” n8n maps the eight audit fields and displays the Google Sheets append output.*
 
 ![Figure 28: Google Sheets contains the lab leaver audit record with Sessions Revoked=TRUE.](screenshots/28-Google-Sheets-Audit-Record.png)
 
-*Figure 28 — Google Sheets contains the lab leaver audit record with Sessions Revoked=TRUE.*
+*Figure 28 â€” Google Sheets contains the lab leaver audit record with Sessions Revoked=TRUE.*
 
 ![Figure 29: Received email containing the Ollama-generated leaver summary. Its prose is not independent evidence of downstream completion.](screenshots/29-Ollama-Email-Delivered.png)
 
-*Figure 29 — Received email containing the Ollama-generated leaver summary. Its prose is not independent evidence of downstream completion.*
+*Figure 29 â€” Received email containing the Ollama-generated leaver summary. Its prose is not independent evidence of downstream completion.*
 
-</details>
+
 
 
 ## Test Results / Evidence
@@ -317,46 +317,46 @@ The screenshots cover multiple implementation and test iterations, not one times
 | Omar exists and is enabled in AD; direct AWS group membership exists | Figure 20 shows `Enabled=True` and the group member list. |
 | Omar provisioned to Entra | Figure 13 shows successful on-demand creation. |
 | Omar provisioned to AWS | Figure 14 lists Omar as enabled and created by SCIM. |
-| Group permission set and pre-offboarding portal access | Figures 15–16 show the assignment setup and Omar's `ViewOnlyAccess` entry. |
+| Group permission set and pre-offboarding portal access | Figures 15â€“16 show the assignment setup and Omar's `ViewOnlyAccess` entry. |
 | AD disablement and membership removal | Figure 21 shows script output, `Enabled=False`, and no members returned by the group query. |
 | n8n webhook, dynamic Graph lookup and revocation | Figure 22 shows successful execution through these nodes and Graph `value=true`; the JSON supplies the dynamic lookup expression. |
 | Entra group membership removed | Figure 24 shows the actual `SG-AWS-Lab-Users` Members page with zero members. |
 | SCIM update and AWS group reaching zero members | Reported in the project notes. No supplied screenshot directly shows the post-offboarding AWS membership view or successful SCIM update log. |
 | Fresh sign-in attempt blocked | Figure 25 shows Entra's account-locked message during the reported fresh AWS portal sign-in attempt. It does not identify the precise lock/disable cause or prove existing AWS sessions ended. |
 | Slack delivery | Figure 26 shows the received leaver alert. |
-| Sheets mapping and audit row | Figures 27–28 show mapping output and the stored row. |
+| Sheets mapping and audit row | Figures 27â€“28 show mapping output and the stored row. |
 | AI summary and email delivery | Figure 29 shows the delivered summary; Figure 30 shows the chain and email branch. |
 
 One original screenshot numbered 23 shows a broad group search returning no results. That is weaker evidence than the actual group Members page; it is retained with an explicit caption. The other original 23 was labelled as AWS but visibly shows Entra. Filenames have been normalized to match the contents rather than perpetuate that label.
 
-<details>
-<summary>View implementation evidence</summary>
+
+
 
 ![Figure 20: Before-state: Omar is enabled in AD and is a direct member of SG-AWS-Lab-Users.](screenshots/20-AD-Before-Leaver.png)
 
-*Figure 20 — Before-state: Omar is enabled in AD and is a direct member of SG-AWS-Lab-Users.*
+*Figure 20 â€” Before-state: Omar is enabled in AD and is a direct member of SG-AWS-Lab-Users.*
 
 ![Figure 21: PowerShell removes membership and disables Omar; verification returns Enabled=False and an empty group member list.](screenshots/21-AD-Leaver-Script-Result.png)
 
-*Figure 21 — PowerShell removes membership and disables Omar; verification returns Enabled=False and an empty group member list.*
+*Figure 21 â€” PowerShell removes membership and disables Omar; verification returns Enabled=False and an empty group member list.*
 
 ![Figure 22: n8n receives the event, looks up the Entra user and completes revocation with value=true. n8n is not shown disabling AD.](screenshots/22-n8n-Entra-Session-Revocation.png)
 
-*Figure 22 — n8n receives the event, looks up the Entra user and completes revocation with value=true. n8n is not shown disabling AD.*
+*Figure 22 â€” n8n receives the event, looks up the Entra user and completes revocation with value=true. n8n is not shown disabling AD.*
 
 ![Figure 23: A broad Entra group search returns no results. This search alone does not establish membership removal.](screenshots/23-Entra-Group-Search-No-Results.png)
 
-*Figure 23 — A broad Entra group search returns no results. This search alone does not establish membership removal.*
+*Figure 23 â€” A broad Entra group search returns no results. This search alone does not establish membership removal.*
 
 ![Figure 24: The actual Entra SG-AWS-Lab-Users Members page shows zero members. The original filename incorrectly called this an AWS screenshot.](screenshots/24-Entra-SG-AWS-Lab-Users-Membership-Removed.png)
 
-*Figure 24 — The actual Entra SG-AWS-Lab-Users Members page shows zero members. The original filename incorrectly called this an AWS screenshot.*
+*Figure 24 â€” The actual Entra SG-AWS-Lab-Users Members page shows zero members. The original filename incorrectly called this an AWS screenshot.*
 
 ![Figure 25: Fresh sign-in is blocked at Entra with an account-locked message; this is not an AWS session-termination result.](screenshots/25-Entra-Fresh-Sign-In-Blocked.png)
 
-*Figure 25 — Fresh sign-in is blocked at Entra with an account-locked message; this is not an AWS session-termination result.*
+*Figure 25 â€” Fresh sign-in is blocked at Entra with an account-locked message; this is not an AWS session-termination result.*
 
-</details>
+
 
 
 ## Security Considerations
@@ -470,3 +470,4 @@ The [sample payload](samples/leaver-payload.json) documents the contract. Postin
 - [AWS IAM Identity Center: revoke user access](https://docs.aws.amazon.com/singlesignon/latest/userguide/revoke-user-permissions.html)
 - [n8n: Webhook node and test/production URLs](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.webhook/)
 - [n8n: Docker installation](https://docs.n8n.io/hosting/installation/docker/)
+
